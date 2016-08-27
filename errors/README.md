@@ -2,6 +2,7 @@
 
 [referance](http://golangweekly.us1.list-manage.com/track/click?u=0618f6a79d6bb9675f313ceb2&id=f918a227f6&e=0708a4e66b)
 
+[![GoDoc](https://godoc.org/github.com/colindev/x/errors?status.svg)](https://godoc.org/github.com/colindev/x/errors)
 
 ### Example errors.Wrap
 
