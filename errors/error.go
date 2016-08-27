@@ -17,11 +17,12 @@ type (
 
 func (e *err) Error() string {
 	if len(e.stack) > 0 {
-		return fmt.Sprintf("%s: %s", e.stack[0].msg, e.current.msg)
+		return fmt.Sprintf("%s: %s", e.current.msg, e.stack[0].msg)
 	}
 	return e.current.msg
 }
 
+// Debug
 func (e *err) Debug() string {
 	ss := e.Error() + "\n"
 	stack := append([]step{e.current}, e.stack...)

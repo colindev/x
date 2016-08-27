@@ -1,28 +1,35 @@
 package errors
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func TestWrap(t *testing.T) {
 
 	var e Error
 
-	en := Wrap(e, "ignored")
-	if en != nil {
-		t.Error(en, "should be nil")
+	e = Wrap(e, "ignored")
+	if e != nil {
+		t.Error(e, "should be nil")
 	}
 
-	ea := New("a")
-	eb := Wrap(ea, "b")
-	ec := Wrap(eb, "c")
+	e = New("a")
+	e = Wrap(e, "b")
+	e = Wrap(e, "c")
 
-	t.Log(ec)
+	if e.Error() != "c: b" {
+		t.Errorf("expect [c: b], but %v", e)
+	}
 }
 
-func TestDebug(t *testing.T) {
+func ExampleError_Debug() {
 
-	ea := New("a")
-	eb := Wrap(ea, "b")
-	ec := Wrap(eb, "c")
+	var e Error
 
-	t.Log(ec.Debug())
+	e = New("a")
+	e = Wrap(e, "b")
+	e = Wrap(e, "c")
+
+	fmt.Println(e.Debug())
 }
