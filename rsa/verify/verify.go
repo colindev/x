@@ -22,7 +22,7 @@ func main() {
 
 	flag.StringVar(&key, "key", "key.pem", "RSA Private key filename")
 	flag.StringVar(&sign, "sign", "", "signed string")
-	flag.IntVar(&size, "size", 256, "RSA Private key size")
+	flag.IntVar(&size, "sha", 256, "RSA Private key size")
 	flag.Parse()
 	log.SetFlags(log.Lshortfile)
 

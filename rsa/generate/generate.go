@@ -13,23 +13,35 @@ import (
 func main() {
 
 	var (
-		outFile string
-		rsaBits int
+		outKeyFile string
+		outPubFile string
+		rsaBits    int
 	)
-	flag.StringVar(&outFile, "o", "key.pem", "outout file name")
-	flag.IntVar(&rsaBits, "b", 256, "key size")
+	flag.StringVar(&outKeyFile, "key", "key.pem", "outout private key filename")
+	flag.StringVar(&outPubFile, "pub", "pub.pem", "outout public key filename")
+	flag.IntVar(&rsaBits, "len", 2048, "key size")
 	flag.Parse()
+	log.SetFlags(log.Lshortfile)
 
 	priv, err := rsa.GenerateKey(rand.Reader, rsaBits)
-	if err != nil {
-		log.Fatal(err)
-	}
+	checkErr(err)
 
-	keyOut, err := os.Create(outFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	keyOut, err := os.Create(outKeyFile)
+	checkErr(err)
 	pem.Encode(keyOut, &pem.Block{Type: "RSA PRIVATE KEY", Bytes: x509.MarshalPKCS1PrivateKey(priv)})
 	keyOut.Close()
+
+	pubOut, err := os.Create(outPubFile)
+	checkErr(err)
+	pub, err := x509.MarshalPKIXPublicKey(&priv.PublicKey)
+	checkErr(err)
+	pem.Encode(pubOut, &pem.Block{Type: "RSA PUBLIC KEY", Bytes: pub})
+	pubOut.Close()
+}
+
+func checkErr(err error) {
+	if err != nil {
+		log.Output(2, err.Error())
+		os.Exit(1)
+	}
 }

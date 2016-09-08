@@ -21,7 +21,7 @@ func main() {
 		err  error
 	)
 	flag.StringVar(&key, "key", "key.pem", "rsa private key filename")
-	flag.IntVar(&size, "size", 256, "rsa bits size")
+	flag.IntVar(&size, "sha", 256, "rsa bits size")
 	flag.Parse()
 	log.SetFlags(log.Lshortfile | log.Ldate)
 
