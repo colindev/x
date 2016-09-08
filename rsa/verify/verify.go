@@ -47,7 +47,15 @@ func main() {
 
 	hasher.Write(in)
 
-	fmt.Printf("verify: %#v\n", rsa.VerifyPKCS1v15(&priv.PublicKey, hash, hasher.Sum(nil), signature))
+	err = rsa.VerifyPKCS1v15(&priv.PublicKey, hash, hasher.Sum(nil), signature)
+
+	var report interface{}
+	if err != nil {
+		report = err
+	} else {
+		report = "ok"
+	}
+	fmt.Printf("verify: %#v\n", report)
 
 }
 
