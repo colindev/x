@@ -1,118 +1,43 @@
 package main
 
 import (
-	"bufio"
 	"flag"
-	"fmt"
-	"io"
 	"log"
-	"net"
 	"os"
 	"os/signal"
 	"syscall"
 )
 
+func init() {
+	log.SetFlags(log.LstdFlags | log.Lshortfile)
+}
+
 func main() {
 	var (
-		listenMode bool
-		network    string
-		addr       string
+		network string
+		in      string
+		out     string
+		args    []string
 	)
 
-	flag.BoolVar(&listenMode, "l", false, "use listen mode")
+	flag.StringVar(&in, "in", "", "stream in")
+	flag.StringVar(&out, "out", "", "stream out")
 	flag.StringVar(&network, "net", "tcp", "network")
-	flag.StringVar(&addr, "addr", "127.0.0.1:8000", "address")
 	flag.Parse()
 
-	if listenMode {
-		listen(network, addr)
-	} else {
-		dial(network, addr)
+	args = flag.Args()
+
+	if out != "" {
+		listen(network, out, args)
+	}
+
+	if in != "" {
+		dial(network, in, args)
 	}
 
 	s := make(chan os.Signal, 1)
 	signal.Notify(s, syscall.SIGTERM, syscall.SIGHUP)
 	for {
 		log.Println("[signal] ", <-s)
-	}
-}
-
-func listen(network, addr string) {
-	var (
-		tcpAddr     *net.TCPAddr
-		tcpListener *net.TCPListener
-		err         error
-	)
-
-	tcpAddr, err = net.ResolveTCPAddr(network, addr)
-	checkError(err)
-
-	tcpListener, err = net.ListenTCP(network, tcpAddr)
-	checkError(err)
-
-	for {
-		conn, err := tcpListener.Accept()
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		go handler(conn)
-	}
-}
-
-func handler(conn net.Conn) {
-
-	defer conn.Close()
-
-	buf := bufio.NewReader(conn)
-	for {
-		b, _, err := buf.ReadLine()
-		if err != nil {
-			if err == io.EOF {
-				log.Println(conn, err)
-			}
-			return
-		}
-
-		fmt.Println(conn, string(b))
-	}
-}
-
-func dial(network, addr string) {
-	var (
-		tcpAddr *net.TCPAddr
-		tcpConn io.ReadWriteCloser
-		err     error
-	)
-	tcpAddr, err = net.ResolveTCPAddr(network, addr)
-	checkError(err)
-
-	tcpConn, err = net.DialTCP(network, nil, tcpAddr)
-	checkError(err)
-	defer tcpConn.Close()
-
-	go func() {
-		buf := bufio.NewReader(tcpConn)
-		for {
-			b, _, err := buf.ReadLine()
-			checkError(err)
-
-			fmt.Println(string(b))
-		}
-	}()
-
-	buf := bufio.NewReader(os.Stdin)
-	for {
-		b, _, err := buf.ReadLine()
-		checkError(err)
-
-		tcpConn.Write(b)
-		tcpConn.Write([]byte("\n"))
-	}
-}
-
-func checkError(err error) {
-	if err != nil {
-		log.Fatal(err)
 	}
 }
