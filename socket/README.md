@@ -24,7 +24,7 @@ go build -o socket
 
 ### Example
 
-1. create a file name `time-server.sh`, then `chmod +x time-server.sh`
+#### 1. create a file name `time-server.sh`, then `chmod +x time-server.sh`
 
 ```sh
 #!/bin/bash
@@ -35,13 +35,13 @@ while true; do
 done
 ```
 
-2. and run socket server adaptor
+#### 2. and run socket server adaptor
 
 ```sh
 ./socket -out 127.0.0.1:8000 ./time-server.sh
 ```
 
-3. run socket client adaptor
+#### 3. run socket client adaptor
 
 create a file name `display.php`
 
