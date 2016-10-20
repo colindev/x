@@ -30,6 +30,8 @@ func main() {
 		log.Println(err)
 	}
 
+	go runHTTP(addr)
+
 	// 處理 signal
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGQUIT)
