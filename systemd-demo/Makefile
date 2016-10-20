@@ -3,6 +3,9 @@ build:
 
 install:
 	cp ./demo-process /usr/local/sbin/
-	cp ./demo.service /lib/systemd/system/demo.servic
-	systemctl enable demo && systemctl daemon-reload && systemctl status demo
+	cp ./demo.service /lib/systemd/system/demo.service
+
+run:
+	systemctl stop demo
+	systemctl daemon-reload && systemctl start demo && systemctl status demo
 
