@@ -4,13 +4,14 @@ After=network.target
 
 [Service]
 Type=forking
-PIDFile=/tmp/demo-process.pid
-User=colin
-Group=colin
+# User=colin
+# Group=colin
 ExecStartPre=/bin/echo ok
-ExecStart=/tmp/demo-process
-ExecStop=/bin/kill $MAINPID
-PrivateTmp=true
+ExecStart=/bin/bash -c '/usr/local/sbin/demo-process &'
+ExecStop=/bin/kill -s QUIT $MAINPID
+
+Restart=always
+RestartSec=10s
 
 [Install]
 WantedBy=multi-user.target
