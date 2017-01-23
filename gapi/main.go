@@ -40,8 +40,6 @@ func main() {
 
 	flag.Parse()
 
-	fmt.Println(scopes)
-
 	b, err := ioutil.ReadFile(secretFile)
 	if err != nil {
 		log.Fatal(err)
