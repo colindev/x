@@ -34,8 +34,7 @@ func init() {
 	log.SetFlags(log.Lshortfile)
 }
 
-// https://develoopers.google.com/identity/protocols/OAuth2ServiceAccount#expiration
-// https://sourcegraph.com/github.com/golang/oauth2@HEAD/-/blob/jwt/jwt.go#L72-80
+// https://cloud.google.com/appengine/docs/admin-api/creating-an-application
 func main() {
 
 	flag.Parse()
@@ -54,7 +53,7 @@ func main() {
 		Email:      ser.ClientEmail,
 		PrivateKey: []byte(ser.PrivateKey),
 		TokenURL:   ser.TokenURI,
-		Scopes:     ([]string)(scopes),
+		Scopes:     []string(scopes),
 	}
 
 	tok, err := conf.TokenSource(context.Background()).Token()
@@ -66,20 +65,11 @@ func main() {
 		log.Fatal("valid fail")
 	}
 
-	c := conf.Client(context.Background())
+	log.Println("Expiry at:", tok.Expiry)
+	fmt.Println(tok.AccessToken)
 
-	res, err := c.Get("https://www.googleapis.com/bigquery/v2/projects/xxxx-155908/datasets?key=")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer res.Body.Close()
-
-	b, err = ioutil.ReadAll(res.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Println(string(b))
+	// c := conf.Client(context.Background())
+	// aes, err := appengine.New(c)
 }
 
 type Secret struct {
