@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"time"
 
 	"golang.org/x/oauth2/jwt"
 )
@@ -22,14 +23,28 @@ func (s *Scopes) String() string {
 	return fmt.Sprintf("%v", ([]string)(*s))
 }
 
+type Exp time.Duration
+
+func (exp *Exp) Set(s string) (err error) {
+	d, err := time.ParseDuration(s)
+	*exp = Exp(d)
+	return
+}
+
+func (exp *Exp) String() string {
+	return time.Duration(*exp).String()
+}
+
 var (
 	secretFile string
 	scopes     = Scopes{}
+	exp        Exp
 )
 
 func init() {
 	flag.StringVar(&secretFile, "secret-file", "", "secret file")
 	flag.Var(&scopes, "scope", "scope")
+	flag.Var(&exp, "exp", "expires")
 
 	log.SetFlags(log.Lshortfile)
 }
@@ -54,6 +69,8 @@ func main() {
 		PrivateKey: []byte(ser.PrivateKey),
 		TokenURL:   ser.TokenURI,
 		Scopes:     []string(scopes),
+		// TODO 目前測試 超過 1h 會被拒絕, 5m 會被忽略一樣是 1h
+		Expires: time.Duration(exp),
 	}
 
 	tok, err := conf.TokenSource(context.Background()).Token()
