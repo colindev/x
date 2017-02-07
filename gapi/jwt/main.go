@@ -2,12 +2,12 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"time"
+
+	"github.com/colindev/x/gapi/secret"
 
 	"golang.org/x/oauth2/jwt"
 )
@@ -49,18 +49,12 @@ func init() {
 	log.SetFlags(log.Lshortfile)
 }
 
-// https://cloud.google.com/appengine/docs/admin-api/creating-an-application
 func main() {
 
 	flag.Parse()
 
-	b, err := ioutil.ReadFile(secretFile)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	var ser Secret
-	if err := json.Unmarshal(b, &ser); err != nil {
+	ser := new(secret.Service)
+	if err := ser.ReadFile(secretFile); err != nil {
 		log.Fatal(err)
 	}
 
@@ -87,15 +81,4 @@ func main() {
 
 	// c := conf.Client(context.Background())
 	// aes, err := appengine.New(c)
-}
-
-type Secret struct {
-	Type         string `json:"type"`
-	ProjectID    string `json:"project_id"`
-	PrivateKeyID string `json:"project_key_id"`
-	PrivateKey   string `json:"private_key"`
-	ClientEmail  string `json:"client_email"`
-	ClientID     string `json:"client_id"`
-	AuthURI      string `json:"auth_uri"`
-	TokenURI     string `json:"token_uri"`
 }
