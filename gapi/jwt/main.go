@@ -58,6 +58,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	ctx := context.Background()
+
 	conf := &jwt.Config{
 		Email:      ser.ClientEmail,
 		PrivateKey: []byte(ser.PrivateKey),
@@ -67,7 +69,7 @@ func main() {
 		Expires: time.Duration(exp),
 	}
 
-	tok, err := conf.TokenSource(context.Background()).Token()
+	tok, err := conf.TokenSource(ctx).Token()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -77,6 +79,7 @@ func main() {
 	}
 
 	log.Println("Expiry at:", tok.Expiry)
+	log.Println("Refresh Token:", tok.RefreshToken)
 	fmt.Println(tok.AccessToken)
 
 	// c := conf.Client(context.Background())

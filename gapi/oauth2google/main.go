@@ -51,7 +51,7 @@ func main() {
 	b, err := ioutil.ReadFile(secretFile)
 	conf, err := google.ConfigFromJSON(b, scopes...)
 
-	url := conf.AuthCodeURL("state", oauth2.AccessTypeOffline)
+	url := conf.AuthCodeURL("state", oauth2.ApprovalForce)
 	fmt.Printf("開啟連結並授權存取: %v\n輸入授權碼: ", url)
 
 	var code string
@@ -65,6 +65,7 @@ func main() {
 	}
 
 	log.Println("Expiry:", tok.Expiry)
+	log.Println("Refresh Token:", tok.RefreshToken)
 	fmt.Println(tok.AccessToken)
 
 	// just sample
