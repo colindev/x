@@ -1,7 +1,6 @@
 SECRETFILE = keys/GCETEST-832b38975e55.json
 
 build:
-	go build -o bin/jwt `ls jwt/*.go | grep -v _test.go`
 	go build -o bin/oauth2google `ls oauth2google/*go | grep -v _test.go`
 
 jwt-cloud-platform:
