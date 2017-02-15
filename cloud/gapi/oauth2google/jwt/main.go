@@ -16,7 +16,7 @@ import (
 
 	"golang.org/x/oauth2/google"
 
-	"github.com/colindev/x/gapi/spec"
+	"github.com/colindev/x/cloud/gapi/spec"
 )
 
 var (
@@ -43,6 +43,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	projectID := getProjectID(b)
+
 	conf, err := google.JWTConfigFromJSON(b, scopes...)
 	if err != nil {
 		log.Fatal(err)
@@ -62,7 +64,8 @@ func main() {
 	// just display
 	tok, err := src.Token()
 	log.Println("Expiry:", tok.Expiry)
-	fmt.Println(tok.AccessToken)
+	log.Println(tok.AccessToken)
+	log.Println("ProjectID:", projectID)
 
 	// get http client
 	// use api lib
@@ -105,8 +108,8 @@ func main() {
 			method = s
 		default:
 			if strings.HasPrefix(s, "http") {
-				fmt.Printf("\033[2muri is [\033[m%s\033[2m]\033[m\n", s)
-				uri = s
+				uri = strings.Replace(s, "{project}", projectID, -1)
+				fmt.Printf("\033[2muri is [\033[m%s\033[2m]\033[m\n", uri)
 			} else {
 				fmt.Printf("\033[2mbody is [\033[m%s\033[2m]\033[m\n", s)
 				body = strings.NewReader(s)
@@ -164,4 +167,21 @@ func readRes(res *http.Response) string {
 	}
 
 	return buf.String()
+}
+
+func getProjectID(b []byte) (pid string) {
+
+	var conf map[string]interface{}
+
+	if err := json.Unmarshal(b, &conf); err != nil {
+		return
+	}
+
+	_pid, exists := conf["project_id"]
+	if !exists {
+		return
+	}
+
+	pid, _ = _pid.(string)
+	return
 }

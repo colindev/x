@@ -1,0 +1,19 @@
+resources:
+- type: compute.v1.instance
+  name: vm-my-first-deployment
+  properties:
+    zone: asia-east1-a
+    machineType: projects/gcetest-156204/zones/asia-east1-a/machineTypes/f1-micro
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: true
+      autoDelete: true
+      initializeParams:
+        sourceImage: projects/debian-cloud/global/images/debian-8-jessie-v20160301
+    networkInterfaces:
+    - network: projects/gcetest-156204/global/networks/default
+      # Access Config required to give the instance a public IP address
+      accessConfigs:
+      - name: External NAT
+        type: ONE_TO_ONE_NAT
