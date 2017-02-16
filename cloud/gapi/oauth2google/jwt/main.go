@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	"golang.org/x/oauth2/google"
 
@@ -66,6 +67,7 @@ func main() {
 	log.Println("Expiry:", tok.Expiry)
 	log.Println(tok.AccessToken)
 	log.Println("ProjectID:", projectID)
+	log.Println("Scopes:", scopes)
 
 	// get http client
 	// use api lib
@@ -117,7 +119,7 @@ func main() {
 		}
 
 		if method != "" && uri != "" && body != nil {
-			fmt.Println("\033[2mstart fetch api\033[m")
+			fmt.Println("\033[2mstart fetch api\033[m", time.Now())
 			req, err := http.NewRequest(strings.ToUpper(method), uri, body)
 			if err != nil {
 				log.Println(err)
